@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"strings"
 
+	"github.com/djangarov/go-git-bot-analyzer/api"
 	"github.com/djangarov/go-git-bot-analyzer/utils"
 )
 
@@ -20,10 +20,14 @@ func main() {
 		*host += utils.URL_SLASH
 	}
 
-	// append gitlab transmitter prefix transmitter/v4/projects
+	// append gitlab api prefix api/v4/projects
 	*host += utils.GITLAB_API_PREFIX
 
-	fmt.Println(*host)
-	fmt.Println(*port)
-	fmt.Print(*privateToken)
+	app := api.Api{
+		Port:         *port,
+		PrivateToken: *privateToken,
+		GitlabHost:   *host,
+	}
+
+	app.Run()
 }
