@@ -14,7 +14,7 @@ type Api struct {
 
 func (api *Api) Run() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/scan-merge-request", api.ScanMergeRequestHandler)
+	mux.HandleFunc("/api/scan-merge-request", api.ScanMergeRequestHandler)
 
 	server := &http.Server{
 		Addr:        fmt.Sprintf(":%d", api.Port),
@@ -25,8 +25,4 @@ func (api *Api) Run() {
 	if err := server.ListenAndServe(); err != http.ErrServerClosed {
 		fmt.Printf("Error: %s \n", err)
 	}
-}
-
-func (api *Api) ScanMergeRequestHandler(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("ScanMergeRequestHandler")
 }
