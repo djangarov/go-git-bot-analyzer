@@ -14,7 +14,7 @@ type Api struct {
 
 func (api *Api) Run() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/api/scan-merge-request", api.ScanMergeRequestHandler)
+	mux.HandleFunc("/api/scan-merge-request", api.handler(api.ScanMergeRequestHandler))
 
 	server := &http.Server{
 		Addr:        fmt.Sprintf(":%d", api.Port),
@@ -24,5 +24,18 @@ func (api *Api) Run() {
 	fmt.Printf("Server started listening on port %d... \n", api.Port)
 	if err := server.ListenAndServe(); err != http.ErrServerClosed {
 		fmt.Printf("Error: %s \n", err)
+	}
+}
+
+func (api *Api) handler(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		beginTime := time.Now()
+		r.Body = http.MaxBytesReader(w, r.Body, 100*1024*1024)
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Printf("Handle Request: %s %s\n", r.URL.Path, r.Method)
+		h(w, r)
+		defer func() {
+			fmt.Printf("Time to process the request: %d mS \n", time.Since(beginTime).Milliseconds())
+		}()
 	}
 }
