@@ -29,10 +29,10 @@ func (api *Api) Run() {
 
 func (api *Api) handler(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Printf("Start processing request: %s %s\n", r.URL.Path, r.Method)
 		beginTime := time.Now()
 		r.Body = http.MaxBytesReader(w, r.Body, 100*1024*1024)
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Printf("Handle Request: %s %s\n", r.URL.Path, r.Method)
 		h(w, r)
 		defer func() {
 			fmt.Printf("Time to process the request: %d mS \n", time.Since(beginTime).Milliseconds())
